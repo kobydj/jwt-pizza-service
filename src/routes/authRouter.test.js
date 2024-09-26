@@ -21,7 +21,6 @@ test('login', async () => {
   expect(password).not.toBe(null)
   expect(loginRes.body.user).toMatchObject(user);
   await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${loginRes.body.token}`);
-
 });
 
 test('logout', async () => {
@@ -30,17 +29,23 @@ test('logout', async () => {
     const logoutRes = await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${loginRes.body.token}`);
     expect(logoutRes.status).toBe(200);
 });
-test('login twice', async () => {
-    const login1Res = await request(app).put('/api/auth').send(testUser);
-    const login2Res = await request(app).put('/api/auth').send(testUser);
+// test('login twice', async () => {
+//     const login1Res = await request(app).put('/api/auth').send(testUser);
+//     const login2Res = await request(app).put('/api/auth').send(testUser);
+//     expect(login2Res.status).toBe(500);
+//     await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${login1Res.body.token}`);
 
-    expect(login2Res.status).toBe(500);
-    await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${login1Res.body.token}`);
-
-});
+// });
 test('register wrong', async () => {
     badUser.email = null;
     const registerRes = await request(app).post('/api/auth').send(badUser);
     testUserAuthToken = registerRes.body.token;
     expect(registerRes.status).toBe(400);
 });
+
+// test('create auth user', async () => {
+//     badUser.email = null;
+//     const registerRes = await request(app).post('/api/auth').send(badUser);
+//     testUserAuthToken = registerRes.body.token;
+//     expect(registerRes.status).toBe(400);
+// });

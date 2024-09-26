@@ -10,10 +10,12 @@ beforeAll(async () => {
     await request(app).post('/api/auth').send(testUser);
     //testUserAuthToken = registerRes.body.token;
     await request(app).put('/api/auth').send(testUser);
+   // testUserAuthToken = loginRes.body.test
 
   });
+
   test('get franchise', async () => {
-    const franchiseRes = await request(app).get('/api/franchise');
+    const franchiseRes = (await request(app).get('/api/franchise'));
     expect(franchiseRes.status).toBe(200);
   });
 
