@@ -2,6 +2,8 @@ const request = require('supertest');
 const app = require('../service');
 
 const testUser = { name: 'pizza diner', email: 'reg@test.com', password: 'a' };
+const badUser = { name: null, email: 'reg@test.com', password: 'a' };
+
 let testUserAuthToken;
 
 beforeAll(async () => {
@@ -18,4 +20,27 @@ test('login', async () => {
   const { password, ...user } = { ...testUser, roles: [{ role: 'diner' }] };
   expect(password).not.toBe(null)
   expect(loginRes.body.user).toMatchObject(user);
+  const logoutRes = await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${loginRes.body.token}`);
+
+});
+
+test('logout', async () => {
+    const loginRes = await request(app).put('/api/auth').send(testUser);
+    expect(loginRes.status).toBe(200);
+    const logoutRes = await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${loginRes.body.token}`);
+    expect(logoutRes.status).toBe(200);
+});
+test('login twice', async () => {
+    const login1Res = await request(app).put('/api/auth').send(testUser);
+    const login2Res = await request(app).put('/api/auth').send(testUser);
+
+    expect(login2Res.status).toBe(500);
+    const logoutRes = await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${login1Res.body.token}`);
+
+});
+test('register wrong', async () => {
+    badUser.email = null;
+    const registerRes = await request(app).post('/api/auth').send(badUser);
+    testUserAuthToken = registerRes.body.token;
+    expect(registerRes.status).toBe(400);
 });
