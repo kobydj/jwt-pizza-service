@@ -20,7 +20,7 @@ test('login', async () => {
   const { password, ...user } = { ...testUser, roles: [{ role: 'diner' }] };
   expect(password).not.toBe(null)
   expect(loginRes.body.user).toMatchObject(user);
-  const logoutRes = await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${loginRes.body.token}`);
+  await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${loginRes.body.token}`);
 
 });
 
@@ -35,7 +35,7 @@ test('login twice', async () => {
     const login2Res = await request(app).put('/api/auth').send(testUser);
 
     expect(login2Res.status).toBe(500);
-    const logoutRes = await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${login1Res.body.token}`);
+    await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${login1Res.body.token}`);
 
 });
 test('register wrong', async () => {
