@@ -4,10 +4,11 @@ const { Role, DB } = require('../database/database.js');
 
 
 const testUser = { name: 'pizza diner', email: 'reg@test.com', password: 'a' };
-//const testOrder = {"franchiseId": 1, "storeId":1, "items":[{ "menuId": 1, "description": "Veggie", "price": 0.05 }]};
+const testOrder = {"franchiseId": 1, "storeId":1, "items":[{ "menuId": 1, "description": "Veggie", "price": 0.05 }]};
 const testMenuItem = { "title":"Student", "description": "No topping, no sauce, just carbs", "image":"pizza9.png", "price": 0.0001 };
 let testUserAuthToken;
 let adminUser;
+let adminAuth;
 
 async function createAdminUser() {
   let user = { password: 'toomanysecrets', roles: [{ role: Role.Admin }] };
@@ -26,6 +27,8 @@ beforeAll(async () => {
   const loginRes = await request(app).put('/api/auth').send(testUser);
   testUserAuthToken = loginRes.body.token;
   adminUser = await createAdminUser();
+  const adminRes = await request(app).put('/api/auth').send(adminUser)
+  adminAuth = adminRes.body.token
 
 });
 
@@ -36,17 +39,30 @@ test('get menu', async () => {
   });
 
 test('add menu item not auth', async () => {
-    const orderRes = await request(app).put('/api/order/menu').send(testMenuItem);
-    expect(orderRes.status).toBe(401);
+    const menuRes = await request(app).put('/api/order/menu').send(testMenuItem);
+    expect(menuRes.status).toBe(401);
   });
 
 test('add menu item with auth', async () => {
-    const adminRes = await request(app).put('/api/auth').send(adminUser)
-    const orderRes = await request(app).put('/api/order/menu').set('Authorization', `Bearer ${adminRes.body.token}`).send(testMenuItem);
+    const menuRes = await request(app).put('/api/order/menu').set('Authorization', `Bearer ${adminAuth}`).send(testMenuItem);
+  
+    expect(menuRes.status).toBe(200);
+    expect(menuRes.body[0]).toMatchObject(testMenuItem);
+  });
+
+test('add order with auth', async () => {
+    const orderRes = await request(app).post('/api/order').set('Authorization', `Bearer ${adminAuth}`).send(testOrder);
   
     expect(orderRes.status).toBe(200);
-    expect(orderRes.body[0]).toMatchObject(testMenuItem);
+    expect(orderRes.body.order).toMatchObject(testOrder);
   });
+
+test('add order with auth', async () => {
+    const orderRes = await request(app).post('/api/order').set('Authorization', `Bearer ${adminAuth}`).send(testMenuItem);
+  
+    expect(orderRes.status).toBe(500);
+  });
+
 
   test('get orders with auth', async () => {
     const ordersRes = await request(app)
@@ -58,18 +74,11 @@ test('add menu item with auth', async () => {
     expect(ordersRes.body.orders).toBeInstanceOf(Array);
   });
 
-  test('add menu item not admin', async () => {
-    const newMenuItem = {
-      title: 'Test Pizza',
-      description: 'A test pizza with no toppings',
-      image: 'pizza10.png',
-      price: 0.01,
-    };
-  
+  test('add menu item not admin', async () => {  
     const addMenuRes = await request(app)
       .put('/api/order/menu')
       .set('Authorization', `Bearer ${testUserAuthToken}`)
-      .send(newMenuItem);
+      .send(testMenuItem);
   
-    expect(addMenuRes.status).toBe(403); // Expect forbidden for non-admin users
+    expect(addMenuRes.status).toBe(403); 
   });
