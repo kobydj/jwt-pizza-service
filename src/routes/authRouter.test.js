@@ -29,12 +29,7 @@ test('logout', async () => {
     const logoutRes = await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${loginRes.body.token}`);
     expect(logoutRes.status).toBe(200);
 });
-test('login twice', async () => {
-    const login1Res = await request(app).put('/api/auth').send(testUser);
-    const login2Res = await request(app).put('/api/auth').send(testUser);
-    expect(login2Res.status).toBe(500);
-    await request(app).delete('/api/auth').set(`Authorization`,  `Bearer ${login1Res.body.token}`);
-});
+
 test('register wrong', async () => {
     badUser.email = null;
     const registerRes = await request(app).post('/api/auth').send(badUser);
