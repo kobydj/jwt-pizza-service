@@ -42,4 +42,4 @@ test('register wrong', async () => {
 //     const registerRes = await request(app).post('/api/auth').send(badUser);
 //     testUserAuthToken = registerRes.body.token;
 //     expect(registerRes.status).toBe(400);
-// });  host=https://pizza-service.dispersedcamp.click
+// });
