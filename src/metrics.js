@@ -18,9 +18,9 @@ class Metrics {
 
     // This will periodically sent metrics to Grafana
     this.sendMetricsPeriodically(10000);
-    const timer = setInterval(() => {
-      calcAuthAttempts();
-      sendHTTPRequests();
+    setInterval(() => {
+      this.calcAuthAttempts();
+      this.sendHTTPRequests();
     },60000)
 
   }
@@ -97,7 +97,7 @@ class Metrics {
   }
 
   sendMetricsPeriodically(period) {
-    const timer = setInterval(() => {
+    setInterval(() => {
       const cpuUsage = getCpuUsagePercentage();
       const memoryUsage = getMemoryUsagePercentage();
       //  system metrics
@@ -133,7 +133,6 @@ class Metrics {
 
 }
 const os = require('os');
-const { post } = require('./service');
 
 function getCpuUsagePercentage() {
   const cpuUsage = os.loadavg()[0] / os.cpus().length;
