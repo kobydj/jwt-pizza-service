@@ -1,4 +1,4 @@
-const config = require('./config.json');
+const config = require('../src/config');
 
 class Metrics {
   constructor() {
