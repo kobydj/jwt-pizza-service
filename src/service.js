@@ -6,7 +6,10 @@ const version = require('./version.json');
 const config = require('./config.js');
 const metrics = require('./metrics.js')
 const app = express();
+const Logger = require('pizza-logger')
+const logger = new Logger(config)
 app.use(metrics.requestTracker.bind(metrics));
+app.use(logger.httpLogger.bind(logger));
 app.use(express.json());
 app.use(setAuthUser);
 app.use((req, res, next) => {
