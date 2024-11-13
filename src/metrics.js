@@ -23,17 +23,17 @@ class Metrics {
     const timer = setInterval(async () => {
       await this.calcAuthAttempts();
       await this.sendHTTPRequests();
-    },60000)
+    },6000)
     timer.unref();
   }
 
   async sendHTTPRequests(){
     console.log("sending http requests")
-    const postMetric = `request,source=${config.metrics.source} method=POST, total=${this.postRequests}`;
-    const deleteMetric = `request,source=${config.metrics.source} method=DELETE, total=${this.deleteRequests}`;
-    const getMetric = `request,source=${config.metrics.source} method=GET, total=${this.getRequests}`;
-    const putMetric = `request,source=${config.metrics.source} method=PUT, total=${this.putRequests}`;
-    const totalMetric = `request,source=${config.metrics.source} method=ALL, total=${this.totalRequests}`;
+    const postMetric = `request,bar_label=POST,source=${config.metrics.source} total=${this.postRequests}`;
+    const deleteMetric = `request,bar_label=DELETE,source=${config.metrics.source} total=${this.deleteRequests}`;
+    const getMetric = `request,bar_label=GET,source=${config.metrics.source} total=${this.getRequests}`;
+    const putMetric = `request,bar_label=PUT,source=${config.metrics.source} total=${this.putRequests}`;
+    const totalMetric = `request,bar_label=ALL,source=${config.metrics.source} total=${this.totalRequests}`;
     await this.sendMetricToGrafana(postMetric);
     await this.sendMetricToGrafana(deleteMetric);
     await this.sendMetricToGrafana(getMetric);
@@ -48,32 +48,38 @@ class Metrics {
   await this.sendMetricToGrafana(metric);
   metric = `AuthAttempts,source=${config.metrics.source} success=FALSE,rate=${this.authAttemptsFailure}`
   await this.sendMetricToGrafana(metric);
-  this.authAttemptsFailure = 0;
-  this.authAttemptsSuccess = 0;
+
 
   metric = `ActiveUsers,source=${config.metrics.source} users=${this.activeUsers}`
   await this.sendMetricToGrafana(metric);
   }
   
-  requestTracker(req, res, next) {
+  async requestTracker(req, res, next) {
     const start = Date.now(); 
     this.totalRequests++;
     console.log("in requestTracker" + req.method)
-    const method = req.method.toUpperCase()
-    if (method =="POST"){
+    const method = req.method
+    console.log(method)
+    if (method ==="POST"){
       this.postRequests++
-    }else if (method =="GET"){
+    }else if (method ==="GET"){
       this.getRequests++
-    }else if (method =="PUT"){
+      console.log(this.getRequests)
+    }else if (method ==="PUT"){
       this.putRequests++
-    }else if (method =="DELETE"){
-      this.deleteRequestsRequests++
+    }else if (method ==="DELETE"){
+      this.deleteRequests++
     }
     res.on('finish', () => {
       this.requestLatency = ((Date.now() - start) + this.requestLatency) / 2; // add latency to request latency and divide by to to find average.
       console.log(`Request to ${req.url} avg latency = ${this.requestLatency}`);
     });
-    next();
+    console.log(`Total requests: ${this.totalRequests}`);
+  console.log(`POST requests: ${this.postRequests}`);
+  console.log(`GET requests: ${this.getRequests}`);
+  console.log(`PUT requests: ${this.putRequests}`);
+  console.log(`DELETE requests: ${this.deleteRequests}`);
+  next();
   }
 
   incrementAuthAttempt(success) {
@@ -127,7 +133,7 @@ class Metrics {
       headers: { Authorization: `Bearer ${config.metrics.userId}:${config.metrics.apiKey}` },
     })
         if (!response.ok) {
-          console.log(response.text())
+          console.log(await response.text())
           console.error('Failed to push metrics data to Grafana');
         } else {
           console.log(`Pushed ${metric}`);
@@ -153,8 +159,7 @@ function getMemoryUsagePercentage() {
   return memoryUsage.toFixed(2);
 }
 
-const metrics = new Metrics();
-module.exports = metrics;
+module.exports = new Metrics();;
 
 
 
