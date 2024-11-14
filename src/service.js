@@ -54,6 +54,9 @@ app.use('*', (req, res) => {
 // Default error handler for all exceptions and errors.
 app.use((err, req, res, next) => {
   res.status(err.statusCode ?? 500).json({ message: err.message, stack: err.stack });
+  if(res.status === 500){
+    logger.log('error', 'unhandledError', { message: err.message, status: 500 })
+  }
   next();
 });
 

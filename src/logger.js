@@ -25,15 +25,8 @@ class Logger {
 
         next();
       };
-    
-  
-    dbLogger(query) {
-      this.log('info', 'db', query);
-    }
-  
-    factoryLogger(orderInfo) {
-      this.log('info', 'factory', orderInfo);
-    }
+
+
   
     unhandledErrorLogger(err) {
       this.log('error', 'unhandledError', { message: err.message, status: err.statusCode });
