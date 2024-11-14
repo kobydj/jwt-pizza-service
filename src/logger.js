@@ -41,7 +41,7 @@ class Logger {
 
   
     log(level, type, logData) {
-      const labels = { component: this.config.logging.source, level: level, type: type };
+      const labels = { component: config.logging.source, level: level, type: type };
       const values = [this.nowString(), this.sanitize(logData)];
       const logEvent = { streams: [{ stream: labels, values: [values] }] };
   
@@ -69,12 +69,12 @@ class Logger {
       // Log to Grafana
       const body = JSON.stringify(event);
       try {
-        const res = await fetch(`${this.config.logging.url}`, {
+        const res = await fetch(`${config.logging.url}`, {
           method: 'post',
           body: body,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.config.logging.userId}:${this.config.logging.apiKey}`,
+            Authorization: `Bearer ${config.logging.userId}:${config.logging.apiKey}`,
           },
         });
         if (!res.ok) {
