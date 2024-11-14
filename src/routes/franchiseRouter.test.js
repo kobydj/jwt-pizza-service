@@ -35,6 +35,7 @@ beforeAll(async () => {
 
   test('get franchise', async () => {
     const franchiseRes = await request(app).get('/api/franchise');
+    console.log(franchiseRes)
     expect(franchiseRes.status).toBe(200);
   });
 
@@ -102,7 +103,7 @@ beforeAll(async () => {
     expect(storeRes.status).toBe(403);
   });
 
-  test('get franchise', async () => {
+  test('get franchise 2', async () => {
     let user = { password: 'toomanysecrets', roles: [{ role: Role.Admin }] };
     user.name = Math.random().toString(35).substring(2, 12);
     user.email = 'f@jwt.com';

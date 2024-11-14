@@ -23,12 +23,12 @@ class Metrics {
     const timer = setInterval(async () => {
       await this.calcAuthAttempts();
       await this.sendHTTPRequests();
-    },6000)
+    },60000)
     timer.unref();
   }
 
   async sendHTTPRequests(){
-    console.log("sending http requests")
+    // console.log("sending http requests")
     const postMetric = `request,bar_label=POST,source=${config.metrics.source} total=${this.postRequests}`;
     const deleteMetric = `request,bar_label=DELETE,source=${config.metrics.source} total=${this.deleteRequests}`;
     const getMetric = `request,bar_label=GET,source=${config.metrics.source} total=${this.getRequests}`;
@@ -42,7 +42,7 @@ class Metrics {
   }
 
   async calcAuthAttempts(){
-    console.log("calculating attempts")
+    // console.log("calculating attempts")
 
   let metric = `AuthAttempts,source=${config.metrics.source} success=TRUE,rate=${this.authAttemptsSuccess}`
   await this.sendMetricToGrafana(metric);
@@ -72,13 +72,13 @@ class Metrics {
     }
     res.on('finish', () => {
       this.requestLatency = ((Date.now() - start) + this.requestLatency) / 2; // add latency to request latency and divide by to to find average.
-      console.log(`Request to ${req.url} avg latency = ${this.requestLatency}`);
+      // console.log(`Request to ${req.url} avg latency = ${this.requestLatency}`);
     });
-    console.log(`Total requests: ${this.totalRequests}`);
-  console.log(`POST requests: ${this.postRequests}`);
-  console.log(`GET requests: ${this.getRequests}`);
-  console.log(`PUT requests: ${this.putRequests}`);
-  console.log(`DELETE requests: ${this.deleteRequests}`);
+  //   console.log(`Total requests: ${this.totalRequests}`);
+  // console.log(`POST requests: ${this.postRequests}`);
+  // console.log(`GET requests: ${this.getRequests}`);
+  // console.log(`PUT requests: ${this.putRequests}`);
+  // console.log(`DELETE requests: ${this.deleteRequests}`);
   next();
   }
 
@@ -121,11 +121,11 @@ class Metrics {
       // latency metrics
       await this.sendMetricToGrafana(`latency,source=${config.metrics.source} serviceLatency=${this.requestLatency}`);
       await this.sendMetricToGrafana(`latency,source=${config.metrics.source} factoryLatency=${this.pizzaLatency}`);
-    }, period);
+    }, period).unref();
   }
 
   async sendMetricToGrafana(metric) {
-    console.log("in sendmetrics " + metric)
+    // console.log("in sendmetrics " + metric)
     try{
     const response = await fetch(`${config.metrics.url}`, {
       method: 'post',
@@ -136,7 +136,7 @@ class Metrics {
           console.log(await response.text())
           console.error('Failed to push metrics data to Grafana');
         } else {
-          console.log(`Pushed ${metric}`);
+          // console.log(`Pushed ${metric}`);
         }
       }catch(error) {
         console.error('Error pushing metrics:', error);
