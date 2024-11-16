@@ -87,10 +87,10 @@ authRouter.put(
   '/',
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    metrics.incrementAuthAttempt(true)
 
     const user = await DB.getUser(email, password);
     const auth = await setAuth(user);
+    metrics.incrementAuthAttempt(true)
     res.json({ user: user, token: auth });
   })
 );
@@ -126,7 +126,6 @@ authRouter.put(
 async function setAuth(user) {
   const token = jwt.sign(user, config.jwtSecret);
   await DB.loginUser(user.id, token);
-  metrics.incrementAuthAttempt(true)
   return token;
 }
 
