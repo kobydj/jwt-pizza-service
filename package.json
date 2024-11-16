@@ -13,6 +13,7 @@
     "bcrypt": "^5.1.1",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "k6": "^0.0.0",
     "lint": "^1.1.2",
     "mysql2": "^3.11.3",
     "pizza-logger": "^1.0.6"
