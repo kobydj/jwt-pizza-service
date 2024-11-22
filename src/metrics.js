@@ -28,7 +28,7 @@ class Metrics {
   }
 
   async sendHTTPRequests(){
-    // console.log("sending http requests")
+    console.log("sending http requests")
     const postMetric = `request,bar_label=POST,source=${config.metrics.source} total=${this.postRequests}`;
     const deleteMetric = `request,bar_label=DELETE,source=${config.metrics.source} total=${this.deleteRequests}`;
     const getMetric = `request,bar_label=GET,source=${config.metrics.source} total=${this.getRequests}`;
@@ -42,16 +42,16 @@ class Metrics {
   }
 
   async calcAuthAttempts(){
-    // console.log("calculating attempts")
+    console.log("calculating attempts")
 
-  let metric = `AuthAttempts,source=${config.metrics.source} success=TRUE,rate=${this.authAttemptsSuccess}`
-  await this.sendMetricToGrafana(metric);
-  metric = `AuthAttempts,source=${config.metrics.source} success=FALSE,rate=${this.authAttemptsFailure}`
-  await this.sendMetricToGrafana(metric);
-
-
-  metric = `ActiveUsers,source=${config.metrics.source} users=${this.activeUsers}`
-  await this.sendMetricToGrafana(metric);
+    let metric = `AuthAttempts,bar_label=success,source=${config.metrics.source} rate=${this.authAttemptsSuccess}`
+    await this.sendMetricToGrafana(metric);
+    metric = `AuthAttempts,bar_label=failure,source=${config.metrics.source} rate=${this.authAttemptsFailure}`
+    await this.sendMetricToGrafana(metric);
+    
+    
+    metric = `ActiveUsers,source=${config.metrics.source} users=${this.activeUsers}`
+    await this.sendMetricToGrafana(metric);
   }
   
   async requestTracker(req, res, next) {
@@ -112,8 +112,9 @@ class Metrics {
       const cpuUsage = getCpuUsagePercentage();
       const memoryUsage = getMemoryUsagePercentage();
       //  system metrics
+      console.log(memoryUsage)
       await this.sendMetricToGrafana(`system,bar_label=cpu_usage,source=${config.metrics.source} cpuUsage=${cpuUsage}`);
-      await this.sendMetricToGrafana(`system,source=${config.metrics.source} memoryUsage=${memoryUsage}`);
+      await this.sendMetricToGrafana(`system,bar_label=memory_usage,source=${config.metrics.source} memoryUsage=${memoryUsage}`);
       // purchase metrics
       await this.sendMetricToGrafana(`purchase,source=${config.metrics.source} PizzaPurchases=${this.pizzasSold}`);
       await this.sendMetricToGrafana(`purchase,source=${config.metrics.source} purchaseFailures=${this.creationFailures}`);

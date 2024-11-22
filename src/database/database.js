@@ -5,6 +5,7 @@ const { StatusCodeError } = require('../endpointHelper.js');
 const { Role } = require('../model/model.js');
 const dbModel = require('./dbModel.js');
 const logger = require('../logger.js')
+const metrics = require('../metrics.js');
 
 class DB {
   constructor() {
@@ -103,6 +104,8 @@ class DB {
     const connection = await this.getConnection();
     try {
       await this.query(connection, `INSERT INTO auth (token, userId) VALUES (?, ?)`, [token, userId]);
+      metrics.incrementAuthAttempt(true)
+
     } finally {
       connection.end();
     }
@@ -124,6 +127,8 @@ class DB {
     const connection = await this.getConnection();
     try {
       await this.query(connection, `DELETE FROM auth WHERE token=?`, [token]);
+      metrics.decreaseUsers()
+
     } finally {
       connection.end();
     }
