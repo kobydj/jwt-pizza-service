@@ -103,9 +103,12 @@ class DB {
     token = this.getTokenSignature(token);
     const connection = await this.getConnection();
     try {
-      await this.query(connection, `INSERT INTO auth (token, userId) VALUES (?, ?)`, [token, userId]);
-      metrics.incrementAuthAttempt(true)
-
+      let result = await this.query(connection, `INSERT INTO auth (token, userId) VALUES (?, ?)`, [token, userId]);
+      if (result.length > 0){
+        metrics.incrementAuthAttempt(true)
+      } else {
+        metrics.incrementAuthAttempt(false)
+      }
     } finally {
       connection.end();
     }
@@ -114,7 +117,7 @@ class DB {
   async isLoggedIn(token) {
     token = this.getTokenSignature(token);
     const connection = await this.getConnection();
-    try {
+    try { 
       const authResult = await this.query(connection, `SELECT userId FROM auth WHERE token=?`, [token]);
       return authResult.length > 0;
     } finally {

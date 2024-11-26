@@ -48,8 +48,6 @@ class Metrics {
     await this.sendMetricToGrafana(metric);
     metric = `AuthAttempts,bar_label=failure,source=${config.metrics.source} rate=${this.authAttemptsFailure}`
     await this.sendMetricToGrafana(metric);
-    
-    
     metric = `ActiveUsers,source=${config.metrics.source} users=${this.activeUsers}`
     await this.sendMetricToGrafana(metric);
   }
