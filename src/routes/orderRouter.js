@@ -101,6 +101,7 @@ orderRouter.post(
       metrics.incrementpurchase(true, price)
       res.send({ order, jwt: j.jwt, reportUrl: j.reportUrl });
     } else {
+      console.log(j.reportUrl)
       metrics.incrementpurchase(false, 0)
       res.status(500).send({ message: 'Failed to fulfill order at factory', reportUrl: j.reportUrl });
     }
