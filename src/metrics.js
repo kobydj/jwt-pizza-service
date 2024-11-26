@@ -28,7 +28,7 @@ class Metrics {
   }
 
   async sendHTTPRequests(){
-    console.log("sending http requests")
+    // console.log("sending http requests")
     const postMetric = `request,bar_label=POST,source=${config.metrics.source} total=${this.postRequests}`;
     const deleteMetric = `request,bar_label=DELETE,source=${config.metrics.source} total=${this.deleteRequests}`;
     const getMetric = `request,bar_label=GET,source=${config.metrics.source} total=${this.getRequests}`;
@@ -42,7 +42,7 @@ class Metrics {
   }
 
   async calcAuthAttempts(){
-    console.log("calculating attempts")
+    // console.log("calculating attempts")
 
     let metric = `AuthAttempts,bar_label=success,source=${config.metrics.source} rate=${this.authAttemptsSuccess}`
     await this.sendMetricToGrafana(metric);
@@ -55,14 +55,14 @@ class Metrics {
   async requestTracker(req, res, next) {
     const start = Date.now(); 
     this.totalRequests++;
-    console.log("in requestTracker" + req.method)
+    // console.log("in requestTracker" + req.method)
     const method = req.method
-    console.log(method)
+    // console.log(method)
     if (method ==="POST"){
       this.postRequests++
     }else if (method ==="GET"){
       this.getRequests++
-      console.log(this.getRequests)
+      // console.log(this.getRequests)
     }else if (method ==="PUT"){
       this.putRequests++
     }else if (method ==="DELETE"){
@@ -110,7 +110,7 @@ class Metrics {
       const cpuUsage = getCpuUsagePercentage();
       const memoryUsage = getMemoryUsagePercentage();
       //  system metrics
-      console.log(memoryUsage)
+      // console.log(memoryUsage)
       await this.sendMetricToGrafana(`system,bar_label=cpu_usage,source=${config.metrics.source} cpuUsage=${cpuUsage}`);
       await this.sendMetricToGrafana(`system,bar_label=memory_usage,source=${config.metrics.source} memoryUsage=${memoryUsage}`);
       // purchase metrics
@@ -132,10 +132,10 @@ class Metrics {
       headers: { Authorization: `Bearer ${config.metrics.userId}:${config.metrics.apiKey}` },
     })
         if (!response.ok) {
-          console.log(await response.text())
+          // console.log(await response.text())
           console.error('Failed to push metrics data to Grafana');
         } else {
-          // console.log(`Pushed ${metric}`);
+          console.log(`Pushed ${metric}`);
         }
       }catch(error) {
         console.error('Error pushing metrics:', error);

@@ -3,10 +3,10 @@ const config = require('./config');
 class Logger {
     
     async httpLogger(req, res, next) {
-        console.log("in HTTPLogger ")
+        // console.log("in HTTPLogger ")
         let send = res.send;
         res.send = (resBody) => {
-            console.log("in HTTPLogger " + JSON.stringify(req.body))
+            // console.log("in HTTPLogger " + JSON.stringify(req.body))
 
           const logData = {
             authorized: !!req.headers.authorization,

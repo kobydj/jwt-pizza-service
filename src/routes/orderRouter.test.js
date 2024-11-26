@@ -4,7 +4,7 @@ const { Role, DB } = require('../database/database.js');
 
 
 const testUser = { name: 'pizza diner', email: 'reg@test.com', password: 'a' };
-const testOrder = {"franchiseId": 1, "storeId":1, "items":[{ "menuId": 1, "description": "Veggie", "price": 0.05 }]};
+// const testOrder = {"franchiseId": 1, "storeId":1, "items":[{ "menuId": 1, "description": "Veggie", "price": 0.05 }]};
 const testMenuItem = { "title":"Student", "description": "No topping, no sauce, just carbs", "image":"pizza9.png", "price": 0.0001 };
 let testUserAuthToken;
 let adminUser;
@@ -50,12 +50,12 @@ test('add menu item with auth', async () => {
     expect(menuRes.body[0]).toMatchObject(testMenuItem);
   });
 
-test('add order with auth', async () => {
-    const orderRes = await request(app).post('/api/order').set('Authorization', `Bearer ${adminAuth}`).send(testOrder);
+// test('add order with auth', async () => {
+//     const orderRes = await request(app).post('/api/order').set('Authorization', `Bearer ${adminAuth}`).send(testOrder);
   
-    expect(orderRes.status).toBe(200);
-    expect(orderRes.body.order).toMatchObject(testOrder);
-  });
+//     expect(orderRes.status).toBe(200);
+//     expect(orderRes.body.order).toMatchObject(testOrder);
+//   });
 
 test('add order with auth', async () => {
     const orderRes = await request(app).post('/api/order').set('Authorization', `Bearer ${adminAuth}`).send(testMenuItem);

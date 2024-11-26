@@ -35,7 +35,7 @@ beforeAll(async () => {
 
   test('get franchise', async () => {
     const franchiseRes = await request(app).get('/api/franchise');
-    console.log(franchiseRes)
+    // console.log(franchiseRes)
     expect(franchiseRes.status).toBe(200);
   });
 
@@ -109,7 +109,7 @@ beforeAll(async () => {
     user.email = 'f@jwt.com';
 
     let userDB = await DB.addUser(user);
-    console.log(userDB.id)
+    // console.log(userDB.id)
     user.password = 'toomanysecrets';
     testFranchise.name = Math.random().toString(30).substring(2, 12);
     const franchiseRes = await request(app).get(`/api/franchise/:${userDB.id}`).set('Authorization', `Bearer ${adminAuth}`);
